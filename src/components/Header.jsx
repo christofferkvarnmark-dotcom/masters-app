@@ -1,6 +1,6 @@
 export default function Header({ activeTab, setActiveTab, isAdmin }) {
   const tabs = [
-    { id: "standings", label: "Bet Standings" },
+    { id: "standings", label: "Standings" },
     { id: "leaderboard", label: "Leaderboard" },
     { id: "timeline", label: "Timeline" },
     ...(isAdmin

@@ -65,7 +65,7 @@ export default function Leaderboard({ participants, golferScores }) {
   return (
     <div className="max-w-4xl mx-auto">
       <h2 className="font-serif text-2xl text-masters-gold font-bold mb-6 text-center">
-        Bet Standings
+        Standings
       </h2>
 
       <div className="bg-masters-dark rounded-xl overflow-hidden shadow-xl">
