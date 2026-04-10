@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --color-masters-green: #006747;
+  --color-masters-dark: #004d35;
+  --color-masters-darker: #003326;
+  --color-masters-gold: #FFD700;
+  --color-masters-gold-dim: #C5A600;
+  --color-masters-cream: #FFF8E7;
+  --color-masters-light: #E8F5E9;
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background-color: var(--color-masters-darker);
+  color: white;
+  min-height: 100vh;
+}

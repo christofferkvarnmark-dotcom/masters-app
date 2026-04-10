@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx vite:*)",
+      "Bash(npm install:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npx vercel:*)",
+      "Bash(git --version)",
+      "Bash(npx:*)",
+      "Bash(curl -s \"https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard\")",
+      "Bash(python3 -m json.tool)",
+      "Bash(node -e \"const d=[];process.stdin.on\\('data',c=>d.push\\(c\\)\\);process.stdin.on\\('end',\\(\\)=>{const j=JSON.parse\\(Buffer.concat\\(d\\)\\);console.log\\(JSON.stringify\\(j,null,2\\).slice\\(0,3000\\)\\)}\\)\")",
+      "Bash(node -e \"const d=[];process.stdin.on\\('data',c=>d.push\\(c\\)\\);process.stdin.on\\('end',\\(\\)=>{const j=JSON.parse\\(Buffer.concat\\(d\\)\\);const cal=j.leagues[0].calendar;const masters=cal.find\\(e=>e.label.toLowerCase\\(\\).includes\\('masters'\\)\\);console.log\\(masters||'not found'\\);console.log\\('events:',j.events?.length||0\\)}\\)\")",
+      "Bash(curl -s \"https://site.api.espn.com/apis/site/v2/sports/golf/pga/scoreboard?event=401811941\")",
+      "Bash(node -e \"const d=[];process.stdin.on\\('data',c=>d.push\\(c\\)\\);process.stdin.on\\('end',\\(\\)=>{const j=JSON.parse\\(Buffer.concat\\(d\\)\\);const ev=j.events?.[0];console.log\\('Event:',ev?.name\\);console.log\\('Competitions:',ev?.competitions?.length\\);const comp=ev?.competitions?.[0];console.log\\('Competitors:',comp?.competitors?.length\\);if\\(comp?.competitors?.length\\){comp.competitors.slice\\(0,3\\).forEach\\(c=>console.log\\(JSON.stringify\\(c,null,2\\).slice\\(0,500\\)\\)\\)}}\\)\")",
+      "Bash(node -e \"const d=[];process.stdin.on\\('data',c=>d.push\\(c\\)\\);process.stdin.on\\('end',\\(\\)=>{const j=JSON.parse\\(Buffer.concat\\(d\\)\\);const comp=j.events[0].competitions[0];const cut=comp.competitors.find\\(c=>c.status&&c.status.type&&c.status.type.name!=='STATUS_SCHEDULED'&&c.status.type.name!=='STATUS_IN_PROGRESS'&&c.status.type.name!=='STATUS_FINAL'\\);if\\(cut\\)console.log\\(JSON.stringify\\(cut.status,null,2\\)\\);const statuses=new Set\\(comp.competitors.map\\(c=>c.status?.type?.name\\)\\);console.log\\('Statuses:',statuses\\)}\\)\")",
+      "Bash(node -e \"const d=[];process.stdin.on\\('data',c=>d.push\\(c\\)\\);process.stdin.on\\('end',\\(\\)=>{const j=JSON.parse\\(Buffer.concat\\(d\\)\\);const comp=j.events[0].competitions[0];const c=comp.competitors[comp.competitors.length-1];console.log\\(JSON.stringify\\(c,null,2\\).slice\\(0,800\\)\\)}\\)\")",
+      "WebSearch",
+      "WebFetch(domain:www.nbcsports.com)",
+      "WebFetch(domain:www.golfdigest.com)",
+      "WebFetch(domain:www.golfmonthly.com)",
+      "WebFetch(domain:www.golfchannel.com)",
+      "WebFetch(domain:golf.com)",
+      "WebFetch(domain:www.skysports.com)",
+      "Bash(npm run:*)"
+    ]
+  }
+}
