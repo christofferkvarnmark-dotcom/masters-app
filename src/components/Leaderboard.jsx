@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MISSED_CUT_SCORE } from "../data/golfers";
 
 function getEffectiveScore(golfer, golferScores) {
@@ -18,8 +18,29 @@ function formatGolferScore(golfer, golferScores) {
   return data.score > 0 ? `+${data.score}` : `${data.score}`;
 }
 
+function PositionChange({ change }) {
+  if (change === 0 || change === null) return null;
+  const gained = change > 0;
+  const onFire = change >= 2;
+  return (
+    <span className={`inline-flex items-center gap-0.5 text-xs font-bold ${gained ? "text-green-400" : "text-red-400"}`}>
+      {gained ? "▲" : "▼"}
+      {Math.abs(change)}
+      {onFire && <span className="ml-0.5" title="On fire!">🔥</span>}
+    </span>
+  );
+}
+
 export default function Leaderboard({ participants, golferScores }) {
   const [expandedIds, setExpandedIds] = useState(new Set());
+  const [prevPositions, setPrevPositions] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("masters_prev_positions")) || {};
+    } catch {
+      return {};
+    }
+  });
+  const isFirstLoad = useRef(true);
 
   const toggleExpanded = (id) => {
     setExpandedIds((prev) => {
@@ -46,8 +67,33 @@ export default function Leaderboard({ participants, golferScores }) {
     if (i > 0 && entry.total !== ranked[i - 1].total) {
       position = i + 1;
     }
-    return { ...entry, position };
+    const prevPos = prevPositions[entry.id];
+    const change = prevPos != null ? prevPos - entry.position : null;
+    return { ...entry, position, change };
   });
+
+  // Save current positions to localStorage when they change
+  useEffect(() => {
+    if (withPositions.length === 0) return;
+    const currentPositions = {};
+    withPositions.forEach((e) => { currentPositions[e.id] = e.position; });
+    const currentStr = JSON.stringify(currentPositions);
+    const prevStr = JSON.stringify(prevPositions);
+    if (currentStr !== prevStr) {
+      // On first load, don't show changes — just seed the stored positions
+      if (isFirstLoad.current && Object.keys(prevPositions).length === 0) {
+        localStorage.setItem("masters_prev_positions", currentStr);
+        setPrevPositions(currentPositions);
+      } else {
+        // Save previous positions so next sync shows the diff
+        setTimeout(() => {
+          localStorage.setItem("masters_prev_positions", currentStr);
+          setPrevPositions(currentPositions);
+        }, 30_000); // keep arrows visible for 30s before updating baseline
+      }
+    }
+    isFirstLoad.current = false;
+  }, [withPositions.map((e) => `${e.id}:${e.position}`).join(",")]);
 
   if (participants.length === 0) {
     return (
@@ -105,6 +151,7 @@ export default function Leaderboard({ participants, golferScores }) {
                 </span>
                 <span className="text-white font-semibold flex items-center gap-2">
                   {entry.name}
+                  <PositionChange change={entry.change} />
                   <span
                     className={`text-masters-cream/40 text-xs transition-transform duration-200 ${
                       isExpanded ? "rotate-180" : ""
