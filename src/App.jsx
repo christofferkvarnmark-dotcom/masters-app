@@ -73,7 +73,12 @@ export default function App() {
         syncScoresRef.current((prev) => {
           const merged = { ...prev };
           for (const [golfer, data] of Object.entries(scores)) {
-            merged[golfer] = data;
+            // Preserve manually set missed cut — don't let ESPN overwrite it
+            if (prev[golfer]?.missedCut && !data.missedCut) {
+              merged[golfer] = { ...data, missedCut: true };
+            } else {
+              merged[golfer] = data;
+            }
           }
           return merged;
         });
