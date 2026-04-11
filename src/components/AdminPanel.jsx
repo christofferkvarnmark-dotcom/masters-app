@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { GOLFERS_2026, MISSED_CUT_SCORE } from "../data/golfers";
+import { GOLFERS_2026, MISSED_CUT_PENALTY } from "../data/golfers";
 
 function formatScore(score, missedCut) {
-  if (missedCut) return `MC (+${MISSED_CUT_SCORE})`;
+  if (missedCut) return `MC (${score >= 0 ? "+" : ""}${score} +${MISSED_CUT_PENALTY} pen)`;
   if (score === 0) return "E";
   return score > 0 ? `+${score}` : `${score}`;
 }

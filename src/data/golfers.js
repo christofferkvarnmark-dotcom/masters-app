@@ -94,4 +94,4 @@ export const GOLFERS_2026 = [
   "Gary Woodland",
 ];
 
-export const MISSED_CUT_SCORE = 5; // +5 for missed cut
+export const MISSED_CUT_PENALTY = 5; // +5 penalty added on top of actual score

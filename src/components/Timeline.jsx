@@ -1,4 +1,4 @@
-import { MISSED_CUT_SCORE } from "../data/golfers";
+import { MISSED_CUT_PENALTY } from "../data/golfers";
 
 const ROUNDS = [
   { key: "round1", label: "Thu Apr 9", short: "R1" },
@@ -23,7 +23,7 @@ function getPositions(participants, golferScores) {
     .map((p) => {
       const total = p.golfers.reduce((sum, g) => {
         const data = golferScores[g] || { score: 0, missedCut: false };
-        return sum + (data.missedCut ? MISSED_CUT_SCORE : data.score);
+        return sum + (data.missedCut ? data.score + MISSED_CUT_PENALTY : data.score);
       }, 0);
       return { id: p.id, name: p.name, total };
     })

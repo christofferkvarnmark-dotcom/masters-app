@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { MISSED_CUT_SCORE } from "../data/golfers";
+import { MISSED_CUT_PENALTY } from "../data/golfers";
 
 function getEffectiveScore(golfer, golferScores) {
   const data = golferScores[golfer] || { score: 0, missedCut: false };
-  return data.missedCut ? MISSED_CUT_SCORE : data.score;
+  return data.missedCut ? data.score + MISSED_CUT_PENALTY : data.score;
 }
 
 function formatTotal(total) {
@@ -13,7 +13,10 @@ function formatTotal(total) {
 
 function formatGolferScore(golfer, golferScores) {
   const data = golferScores[golfer] || { score: 0, missedCut: false };
-  if (data.missedCut) return "MC";
+  if (data.missedCut) {
+    const scoreStr = data.score >= 0 ? `+${data.score}` : `${data.score}`;
+    return `MC ${scoreStr} +${MISSED_CUT_PENALTY}pen`;
+  }
   if (data.score === 0) return "E";
   return data.score > 0 ? `+${data.score}` : `${data.score}`;
 }
