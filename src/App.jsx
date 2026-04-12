@@ -54,6 +54,7 @@ export default function App() {
     "participants",
     SAMPLE_PARTICIPANTS
   );
+  const [missedCuts, setMissedCuts, missedCutsLoading] = useFirebaseData("missedCuts", {});
   const [history, setHistory, historyLoading] = useFirebaseData("history", {});
   const [lastSync, setLastSync] = useState(null);
   const [syncing, setSyncing] = useState(false);
@@ -73,12 +74,7 @@ export default function App() {
         syncScoresRef.current((prev) => {
           const merged = { ...prev };
           for (const [golfer, data] of Object.entries(scores)) {
-            // Update score from ESPN, but preserve existing missedCut unless ESPN explicitly sets it
-            const prevMissedCut = prev[golfer]?.missedCut || false;
-            merged[golfer] = {
-              ...data,
-              missedCut: data.missedCut || prevMissedCut,
-            };
+            merged[golfer] = { ...merged[golfer], score: data.score };
           }
           return merged;
         });
@@ -108,7 +104,15 @@ export default function App() {
     return () => clearInterval(interval);
   }, [autoSync, syncScores]);
 
-  const loading = scoresLoading || participantsLoading || historyLoading;
+  // Merge scores with separate missedCuts store
+  const mergedGolferScores = { ...golferScores };
+  for (const [golfer, mc] of Object.entries(missedCuts)) {
+    if (mergedGolferScores[golfer]) {
+      mergedGolferScores[golfer] = { ...mergedGolferScores[golfer], missedCut: mc };
+    }
+  }
+
+  const loading = scoresLoading || participantsLoading || historyLoading || missedCutsLoading;
 
   if (loading) {
     return (
@@ -170,7 +174,7 @@ export default function App() {
         {activeTab === "standings" && (
           <Leaderboard
             participants={participantsList}
-            golferScores={golferScores}
+            golferScores={mergedGolferScores}
           />
         )}
         {activeTab === "leaderboard" && (
@@ -179,15 +183,17 @@ export default function App() {
         {activeTab === "timeline" && (
           <Timeline
             participants={participantsList}
-            golferScores={golferScores}
+            golferScores={mergedGolferScores}
             history={history}
           />
         )}
         {activeTab === "admin" &&
           (isAdmin ? (
             <AdminPanel
-              golferScores={golferScores}
+              golferScores={mergedGolferScores}
               setGolferScores={setGolferScores}
+              missedCuts={missedCuts}
+              setMissedCuts={setMissedCuts}
               history={history}
               setHistory={setHistory}
             />
@@ -199,7 +205,7 @@ export default function App() {
             <ParticipantManager
               participants={participantsList}
               setParticipants={setParticipants}
-              golferScores={golferScores}
+              golferScores={mergedGolferScores}
             />
           ) : (
             <AdminLogin onSuccess={() => setIsAdmin(true)} />

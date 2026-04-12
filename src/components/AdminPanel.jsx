@@ -7,7 +7,7 @@ function formatScore(score, missedCut) {
   return score > 0 ? `+${score}` : `${score}`;
 }
 
-export default function AdminPanel({ golferScores, setGolferScores, history, setHistory }) {
+export default function AdminPanel({ golferScores, setGolferScores, missedCuts, setMissedCuts, history, setHistory }) {
   const [search, setSearch] = useState("");
 
   const filtered = GOLFERS_2026.filter((name) =>
@@ -24,12 +24,10 @@ export default function AdminPanel({ golferScores, setGolferScores, history, set
   };
 
   const toggleMissedCut = (golfer) => {
-    setGolferScores((prev) => ({
+    const current = missedCuts[golfer] || false;
+    setMissedCuts((prev) => ({
       ...prev,
-      [golfer]: {
-        ...prev[golfer],
-        missedCut: !prev[golfer]?.missedCut,
-      },
+      [golfer]: !current,
     }));
   };
 
