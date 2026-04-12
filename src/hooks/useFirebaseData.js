@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { ref, onValue, set } from "firebase/database";
 import { db } from "../firebase";
 
@@ -34,28 +34,37 @@ function decodeKeys(obj) {
 export function useFirebaseData(path, initialValue) {
   const [data, setData] = useState(initialValue);
   const [loading, setLoading] = useState(true);
+  const dataRef = useRef(data);
 
   const isScoresPath = path === "scores";
+
+  useEffect(() => {
+    dataRef.current = data;
+  }, [data]);
 
   useEffect(() => {
     const dbRef = ref(db, path);
     const unsubscribe = onValue(dbRef, (snapshot) => {
       const val = snapshot.val();
       if (val !== null) {
-        setData(isScoresPath ? decodeKeys(val) : val);
+        const decoded = isScoresPath ? decodeKeys(val) : val;
+        setData(decoded);
+        dataRef.current = decoded;
       } else {
         setData(initialValue);
+        dataRef.current = initialValue;
       }
       setLoading(false);
     });
     return () => unsubscribe();
   }, [path]);
 
-  const setFirebaseData = (newData) => {
-    const value = typeof newData === "function" ? newData(data) : newData;
+  const setFirebaseData = useCallback((newData) => {
+    const value = typeof newData === "function" ? newData(dataRef.current) : newData;
     setData(value);
+    dataRef.current = value;
     set(ref(db, path), isScoresPath ? encodeKeys(value) : value);
-  };
+  }, [path, isScoresPath]);
 
   return [data, setFirebaseData, loading];
 }
