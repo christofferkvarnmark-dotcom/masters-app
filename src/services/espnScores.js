@@ -69,14 +69,17 @@ export async function fetchESPNScores() {
 
     const scoreToPar = parseScoreToPar(competitor.score);
 
-    // Check if player missed the cut
+    // Check if player missed the cut (only trust ESPN if it actually reports a status)
     const statusName = competitor.status?.type?.name || "";
     const missedCut = statusName === "STATUS_CUT" || statusName === "STATUS_WITHDRAWN";
 
     // Match to our golfer list for pool scores
     const matchedGolfer = matchGolferName(name);
     if (matchedGolfer) {
-      scores[matchedGolfer] = { score: scoreToPar, missedCut };
+      // Only include missedCut if ESPN explicitly says so — otherwise leave it untouched
+      const entry = { score: scoreToPar };
+      if (missedCut) entry.missedCut = true;
+      scores[matchedGolfer] = entry;
     }
 
     // Build full tournament leaderboard entry
